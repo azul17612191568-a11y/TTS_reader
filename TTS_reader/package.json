@@ -1,0 +1,9 @@
+{
+  "name": "tts-reader",
+  "private": true,
+  "version": "1.0.0",
+  "description": "文本转语音阅读器 — 支持 Markdown 过滤，使用浏览器语音合成引擎",
+  "scripts": {
+    "start": "python server.py"
+  }
+}

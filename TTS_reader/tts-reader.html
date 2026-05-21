@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本转语音阅读器</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ── Color System ── */
+            --bg-gradient: linear-gradient(160deg, #f7f3ee 0%, #ede7dc 40%, #e8e0d2 100%);
+            --bg-container: rgba(255, 252, 247, 0.82);
+            --bg-container-solid: #fffcf7;
+            --bg-container-rgb: 255,252,247;
+            --bg-card: rgba(255, 255, 255, 0.72);
+            --bg-card-solid: #ffffff;
+            --bg-input: rgba(250, 247, 242, 0.9);
+            --bg-input-active: #ffffff;
+            --bg-hover: rgba(120, 80, 40, 0.05);
+            --bg-hover-strong: rgba(120, 80, 40, 0.09);
+            --border-color: rgba(180, 165, 140, 0.35);
+            --border-active: #9a7b4f;
+            --text-primary: #2c2418;
+            --text-secondary: #6d5d4a;
+            --text-muted: #a89880;
+            --text-highlight: #1a0e00;
+            --accent: #8b6b3d;
+            --accent-end: #6e5430;
+            --accent-light: rgba(139, 107, 61, 0.14);
+            --accent-hover: rgba(139, 107, 61, 0.08);
+            --accent-glow: rgba(139, 107, 61, 0.25);
+            --status-info-bg: rgba(139, 107, 61, 0.08);
+            --status-info-color: #7a6540;
+            --status-success-bg: rgba(76, 140, 80, 0.08);
+            --status-success-color: #4a8a4e;
+            --status-error-bg: rgba(180, 60, 60, 0.08);
+            --status-error-color: #b43c3c;
+            --shadow-sm: 0 1px 2px rgba(60, 45, 25, 0.04);
+            --shadow: 0 4px 20px rgba(60, 45, 25, 0.06), 0 1px 3px rgba(60, 45, 25, 0.03);
+            --shadow-md: 0 8px 30px rgba(60, 45, 25, 0.08);
+            --shadow-lg: 0 16px 48px rgba(60, 45, 25, 0.10);
+            --shadow-card: 0 2px 12px rgba(60, 45, 25, 0.05), inset 0 1px 0 rgba(255,255,255,0.6);
+            --scrollbar-track: transparent;
+            --scrollbar-thumb: rgba(160, 145, 120, 0.3);
+            --scrollbar-thumb-hover: rgba(140, 125, 100, 0.5);
+            --history-item-bg: rgba(255, 255, 255, 0.5);
+            --history-item-hover: rgba(255, 255, 255, 0.8);
+            --history-item-active: rgba(139, 107, 61, 0.08);
+            --minimal-bg: rgba(255, 252, 247, 0.88);
+            --btn-play-start: #8b6b3d;
+            --btn-play-end: #6e5430;
+            --btn-stop: #c44040;
+            --btn-stop-hover: #a83535;
+            --btn-continue: #4a9a5a;
+            --btn-continue-hover: #3d8a4d;
+
+            /* ── Typography ── */
+            --font-display: 'Noto Serif SC', 'Georgia', serif;
+            --font-ui: 'DM Sans', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+
+            /* ── Spacing ── */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 24px;
+            --space-2xl: 32px;
+
+            /* ── Shape ── */
+            --radius-xs: 4px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-2xl: 24px;
+
+            /* ── Motion ── */
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition-fast: 0.15s var(--ease-out);
+            --transition-normal: 0.25s var(--ease-out);
+            --transition-slow: 0.4s var(--ease-out);
+
+            /* ── Glass ── */
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-blur: blur(16px);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(160deg, #0c0a14 0%, #12101e 40%, #0e1525 100%);
+            --bg-container: rgba(18, 16, 30, 0.82);
+            --bg-container-solid: #12101e;
+            --bg-container-rgb: 18,16,30;
+            --bg-card: rgba(28, 26, 44, 0.65);
+            --bg-card-solid: #1c1a2c;
+            --bg-input: rgba(24, 22, 40, 0.9);
+            --bg-input-active: #2a2844;
+            --bg-hover: rgba(130, 160, 255, 0.06);
+            --bg-hover-strong: rgba(130, 160, 255, 0.10);
+            --border-color: rgba(80, 75, 120, 0.3);
+            --border-active: #7b8cde;
+            --text-primary: #e0dfe8;
+            --text-secondary: #8a88a8;
+            --text-muted: #5a5878;
+            --text-highlight: #f0f0ff;
+            --accent: #7b8cde;
+            --accent-end: #6270c4;
+            --accent-light: rgba(123, 140, 222, 0.16);
+            --accent-hover: rgba(123, 140, 222, 0.08);
+            --accent-glow: rgba(123, 140, 222, 0.30);
+            --status-info-bg: rgba(123, 140, 222, 0.10);
+            --status-info-color: #8a9ae0;
+            --status-success-bg: rgba(80, 180, 100, 0.10);
+            --status-success-color: #6ac07a;
+            --status-error-bg: rgba(220, 80, 80, 0.10);
+            --status-error-color: #e06060;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.15);
+            --shadow: 0 4px 20px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 8px 30px rgba(0,0,0,0.25);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.3);
+            --shadow-card: 0 2px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.04);
+            --scrollbar-track: transparent;
+            --scrollbar-thumb: rgba(80, 75, 120, 0.35);
+            --scrollbar-thumb-hover: rgba(100, 95, 140, 0.5);
+            --history-item-bg: rgba(28, 26, 44, 0.5);
+            --history-item-hover: rgba(36, 34, 56, 0.7);
+            --history-item-active: rgba(123, 140, 222, 0.10);
+            --minimal-bg: rgba(18, 16, 30, 0.88);
+            --btn-play-start: #7b8cde;
+            --btn-play-end: #6270c4;
+            --btn-stop: #c44040;
+            --btn-stop-hover: #a83535;
+            --btn-continue: #4a9a5a;
+            --btn-continue-hover: #3d8a4d;
+            --glass-bg: rgba(28, 26, 44, 0.55);
+            --glass-border: rgba(60, 55, 100, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 24px;
+            color: var(--text-primary);
+            transition: background var(--transition-slow), color var(--transition-normal);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+        }
+
+        /* ── Container ── */
+        .container {
+            background: var(--bg-container);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-xl) var(--space-2xl);
+            width: 100%;
+            margin: 0 auto;
+            transition: background var(--transition-slow), box-shadow var(--transition-normal);
+            max-width: 1480px;
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        h1 {
+            font-family: var(--font-display);
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            flex: 1;
+            letter-spacing: -0.02em;
+        }
+        .theme-switcher { display: flex; gap: var(--space-sm); }
+        .theme-btn {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        .theme-btn:hover { transform: scale(1.12); border-color: var(--accent); }
+        .theme-btn.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+        .theme-btn-light { background: linear-gradient(135deg, #fffcf7 50%, #c4a87a 50%); }
+        .theme-btn-dark { background: linear-gradient(135deg, #12101e 50%, #7b8cde 50%); }
+
+        /* ── Controls ── */
+        .controls {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        .control-group { display: flex; flex-direction: column; gap: var(--space-xs); }
+        label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        select, input[type="range"] {
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: var(--font-ui);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+        }
+        select {
+            cursor: pointer;
+            padding-right: 28px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236d5d4a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+        select:focus, input[type="range"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+            background: var(--bg-input-active);
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 16px; height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+            border-radius: var(--radius-xs);
+        }
+        .checkbox-group label {
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            margin: 0;
+            user-select: none;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        /* ── Paste Section ── */
+        .paste-section { margin-bottom: var(--space-md); }
+        .paste-header {
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+            user-select: none; padding: 10px 14px; border-radius: var(--radius-md);
+            transition: background var(--transition-fast);
+            border: 1px solid transparent;
+        }
+        .paste-header:hover { background: var(--bg-hover); border-color: var(--border-color); }
+        .paste-header .section-label { margin: 0; cursor: pointer; }
+        .expand-hint {
+            font-size: 10px; color: var(--accent);
+            transition: opacity var(--transition-fast), transform var(--transition-fast);
+            font-weight: 500;
+        }
+        .expand-hint.hidden { opacity: 0; pointer-events: none; transform: translateY(-2px); }
+        .paste-body {
+            overflow: hidden;
+            transition: max-height var(--transition-slow), opacity var(--transition-fast), margin var(--transition-fast);
+            max-height: 200px; opacity: 1;
+        }
+        .paste-body.collapsed { max-height: 0; opacity: 0; pointer-events: none; margin-top: 0; }
+        .section-label {
+            font-size: 13px; color: var(--text-primary); font-weight: 600;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .paste-area {
+            width: 100%; height: 90px; padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 14px; font-family: var(--font-ui);
+            resize: vertical; line-height: 1.7;
+            background: var(--bg-input); color: var(--text-primary);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+        }
+        .paste-area:focus {
+            outline: none; border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+            background: var(--bg-input-active);
+        }
+        .paste-area::placeholder { color: var(--text-muted); }
+
+        /* ── Main Layout ── */
+        .main-layout {
+            display: grid;
+            grid-template-columns: minmax(200px, 240px) minmax(300px, 2fr) minmax(200px, 220px) minmax(280px, 300px);
+            gap: var(--space-lg);
+        }
+
+        /* ── History Panel ── */
+        .history-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            height: 600px;
+            display: flex; flex-direction: column;
+            transition: background var(--transition-slow);
+            min-width: 0; overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-card);
+        }
+        .history-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: var(--space-md); min-width: 0;
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .history-title {
+            font-size: 13px; font-weight: 600; color: var(--text-primary); flex-shrink: 0;
+        }
+        .history-clear {
+            font-size: 11px; color: var(--text-muted); cursor: pointer;
+            border: none; background: none; padding: 2px 8px;
+            border-radius: var(--radius-xs);
+            transition: all var(--transition-fast);
+        }
+        .history-clear:hover { color: var(--status-error-color); background: var(--status-error-bg); }
+        .history-list {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column; gap: 4px; min-width: 0;
+        }
+        .history-item {
+            padding: 10px 12px; border-radius: var(--radius-sm);
+            cursor: pointer; transition: all var(--transition-fast);
+            background: var(--history-item-bg); position: relative; min-width: 0;
+            border: 1px solid transparent;
+        }
+        .history-item:hover { background: var(--history-item-hover); border-color: var(--border-color); }
+        .history-item.active {
+            background: var(--history-item-active);
+            border-left: 3px solid var(--accent);
+            border-color: var(--border-color);
+        }
+        .history-item-text {
+            font-size: 13px; color: var(--text-primary);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            margin-right: 24px; line-height: 1.4;
+        }
+        .history-item-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+        .history-item-continue {
+            display: inline-block; font-size: 11px; color: var(--accent); cursor: pointer;
+            margin-top: 4px; padding: 2px 8px; border-radius: var(--radius-xs);
+            background: var(--accent-hover);
+            transition: all var(--transition-fast); font-weight: 500;
+        }
+        .history-item-continue:hover { background: var(--accent-light); }
+        .history-item-delete {
+            position: absolute; top: 10px; right: 10px; width: 22px; height: 22px;
+            border-radius: 50%; border: none; background: transparent; color: var(--text-muted);
+            cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: all var(--transition-fast);
+        }
+        .history-item:hover .history-item-delete { opacity: 1; }
+        .history-item-delete:hover { background: var(--status-error-color); color: white; }
+        .history-empty {
+            text-align: center; padding: 40px 10px; color: var(--text-muted); font-size: 13px;
+        }
+        .recycle-panel {
+            display: none; margin-top: var(--space-sm); padding: var(--space-md);
+            background: var(--bg-input); border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            max-height: 200px; overflow-y: auto;
+        }
+        .recycle-panel.visible { display: block; }
+        .recycle-title { font-size: 12px; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-sm); }
+        .recycle-item {
+            padding: 8px 10px; background: var(--history-item-bg);
+            border-radius: var(--radius-sm); margin-bottom: 6px; font-size: 12px;
+            border: 1px solid var(--border-color); transition: all var(--transition-fast);
+        }
+        .recycle-item:hover { border-color: var(--accent); }
+        .recycle-item-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+        .recycle-item-actions { display: flex; gap: 6px; margin-top: 4px; }
+        .recycle-btn-restore {
+            font-size: 11px; color: var(--accent); cursor: pointer;
+            background: var(--accent-hover); border: none;
+            padding: 3px 10px; border-radius: var(--radius-xs);
+            transition: all var(--transition-fast); font-weight: 500;
+        }
+        .recycle-btn-restore:hover { background: var(--accent-light); }
+        .recycle-btn-delete {
+            font-size: 11px; color: var(--status-error-color); cursor: pointer;
+            background: var(--status-error-bg); border: none;
+            padding: 3px 10px; border-radius: var(--radius-xs);
+            transition: all var(--transition-fast);
+        }
+        .recycle-btn-delete:hover { opacity: 0.85; }
+        .recycle-empty { font-size: 12px; color: var(--text-muted); text-align: center; padding: var(--space-md); }
+        .btn-recycle-bin {
+            width: 100%; margin-top: var(--space-sm); padding: 8px;
+            border: 1px dashed var(--border-color); border-radius: var(--radius-md);
+            background: transparent; color: var(--text-muted); cursor: pointer;
+            font-size: 11px; transition: all var(--transition-fast); font-weight: 500;
+        }
+        .btn-recycle-bin:hover { border-color: var(--status-error-color); color: var(--status-error-color); background: var(--status-error-bg); }
+        .recycle-badge {
+            display: none; background: var(--status-error-color); color: white;
+            font-size: 10px; padding: 1px 6px; border-radius: 10px;
+            margin-left: 4px; font-weight: 600; min-width: 18px; text-align: center;
+        }
+        .recycle-badge.visible { display: inline-block; }
+
+        .btn-new-record {
+            width: 100%; margin-top: var(--space-md); padding: 10px var(--space-md);
+            border: 1px dashed var(--border-color); border-radius: var(--radius-md);
+            background: transparent; color: var(--text-secondary); cursor: pointer;
+            font-size: 13px; transition: all var(--transition-fast); font-weight: 500;
+        }
+        .btn-new-record:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-hover); }
+
+        /* ── Reading Section ── */
+        .reading-section {
+            display: flex; flex-direction: column; min-width: 0; position: relative;
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+        .reading-area {
+            width: 100%; height: 600px;
+            padding: 40px 44px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-lg);
+            overflow-y: auto; overflow-x: hidden;
+            background: var(--bg-input); cursor: text;
+            font-family: var(--font-display);
+            font-size: 17px; line-height: 2.2;
+            color: var(--text-primary);
+            transition: background var(--transition-slow);
+        }
+        .reading-area.active { background: var(--bg-input-active); }
+        .reading-area p { margin-bottom: 1.2em; text-align: justify; }
+        .reading-area strong { font-weight: 700; color: var(--text-highlight); }
+        .reading-area em { font-style: italic; }
+        .reading-area .sentence {
+            display: inline; padding: 2px 3px; border-radius: var(--radius-xs);
+            transition: background var(--transition-fast), box-shadow var(--transition-fast);
+            cursor: pointer; word-break: break-word;
+        }
+        .reading-area .sentence:hover { background: var(--bg-hover-strong); }
+        .reading-area .sentence.current {
+            background: var(--accent-light);
+            border-bottom: 2px solid var(--accent);
+            font-weight: 600; border-radius: 3px;
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        /* ── Sidebar ── */
+        .sidebar { display: flex; flex-direction: column; gap: var(--space-md); min-width: 0; }
+        .sidebar-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: background var(--transition-slow);
+            flex-shrink: 0; max-width: 100%;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-card);
+        }
+        .sidebar-title {
+            font-size: 12px; font-weight: 600; color: var(--text-secondary);
+            margin-bottom: var(--space-md); padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .btn-group { display: flex; flex-direction: column; gap: var(--space-sm); }
+        .btn-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
+        .btn-group-row button { flex: 1; }
+        .sidebar button {
+            width: 100%; padding: 10px 12px; border: none;
+            border-radius: var(--radius-sm); font-size: 13px;
+            font-family: var(--font-ui);
+            font-weight: 600; cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .sidebar button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-play {
+            background: linear-gradient(135deg, var(--btn-play-start) 0%, var(--btn-play-end) 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(139, 107, 61, 0.25);
+        }
+        .btn-play:hover:not(:disabled) {
+            box-shadow: 0 4px 16px rgba(139, 107, 61, 0.35);
+            transform: translateY(-1px);
+        }
+        .btn-play:active:not(:disabled) { transform: translateY(0); }
+        .btn-stop { background: var(--btn-stop); color: white; }
+        .btn-stop:hover:not(:disabled) { background: var(--btn-stop-hover); box-shadow: 0 2px 8px rgba(196, 64, 64, 0.25); }
+        .btn-secondary {
+            background: var(--bg-card); color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover:not(:disabled) { background: var(--bg-hover-strong); border-color: var(--accent); }
+        .btn-skip {
+            background: var(--bg-card); color: var(--text-secondary);
+            font-size: 12px; padding: 8px;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+        }
+        .btn-skip:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent); color: var(--accent); }
+
+        /* ── Progress ── */
+        .progress-section { margin-top: var(--space-sm); }
+        .progress-bar {
+            width: 100%; height: 5px;
+            background: var(--border-color); border-radius: 3px;
+            overflow: hidden; cursor: pointer;
+            transition: height var(--transition-fast);
+        }
+        .progress-bar:hover { height: 8px; }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-end) 100%);
+            width: 0%; transition: width 0.15s ease-out; border-radius: 3px;
+        }
+        .progress-row { display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-sm); }
+        .progress-pct { font-size: 12px; color: var(--accent); font-weight: 600; }
+        .progress-count { font-size: 12px; color: var(--text-secondary); }
+        .char-count { font-size: 11px; color: var(--text-muted); text-align: right; margin-top: var(--space-xs); }
+        .status {
+            padding: 8px 10px; border-radius: var(--radius-sm);
+            text-align: center; font-weight: 500; font-size: 12px;
+            display: none; margin-top: var(--space-sm);
+        }
+        .status.info { background: var(--status-info-bg); color: var(--status-info-color); display: block; }
+        .status.success { background: var(--status-success-bg); color: var(--status-success-color); display: block; }
+        .status.error { background: var(--status-error-bg); color: var(--status-error-color); display: block; }
+        .voice-info { font-size: 11px; color: var(--text-secondary); text-align: center; margin-top: var(--space-sm); line-height: 1.4; }
+
+        /* ── AI Panel ── */
+        .ai-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: background var(--transition-slow);
+            min-width: 0; overflow-y: auto; height: 600px;
+            display: flex; flex-direction: column;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-card);
+        }
+        .ai-panel-title {
+            font-size: 12px; font-weight: 600; color: var(--text-secondary);
+            margin-bottom: var(--space-md); padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .ai-btn-group { display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-md); }
+        .ai-btn-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
+        .ai-btn {
+            padding: 9px 12px; border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-input); color: var(--text-primary); cursor: pointer;
+            font-size: 12px; font-family: var(--font-ui);
+            transition: all var(--transition-fast); text-align: left; font-weight: 500;
+        }
+        .ai-btn:hover { background: var(--accent-hover); border-color: var(--accent); color: var(--accent); }
+        .ai-btn.active {
+            background: var(--accent); color: white; border-color: var(--accent);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        .ai-output {
+            flex: 1; padding: var(--space-md);
+            background: var(--bg-input); border-radius: var(--radius-md);
+            font-size: 13px; line-height: 1.7; color: var(--text-primary);
+            overflow-y: auto; white-space: pre-wrap; min-height: 120px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-fast);
+        }
+        .ai-output.empty {
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 12px;
+        }
+        .ai-output.loading { color: var(--accent); }
+        .ai-config-toggle {
+            width: 100%; margin-top: var(--space-sm); padding: 8px 10px;
+            border: 1px dashed var(--border-color); border-radius: var(--radius-md);
+            background: transparent; color: var(--text-muted); cursor: pointer;
+            font-size: 11px; font-family: var(--font-ui);
+            transition: all var(--transition-fast); font-weight: 500;
+        }
+        .ai-config-toggle:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-hover); }
+
+        .ai-config-panel {
+            display: none; margin-top: var(--space-md); padding: var(--space-md);
+            background: var(--bg-input); border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+        .ai-config-panel.visible { display: block; }
+        .ai-config-panel label {
+            display: block; font-size: 11px; color: var(--text-secondary);
+            margin-bottom: var(--space-xs); margin-top: 10px; font-weight: 500;
+        }
+        .ai-config-panel label:first-child { margin-top: 0; }
+        .ai-config-panel select, .ai-config-panel input {
+            width: 100%; padding: 8px 10px;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            font-size: 12px; font-family: var(--font-ui);
+            background: var(--bg-container); color: var(--text-primary);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        .ai-config-panel select:focus, .ai-config-panel input:focus {
+            outline: none; border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+        .ai-config-panel select { cursor: pointer; }
+        .ai-config-save {
+            width: 100%; margin-top: var(--space-md); padding: 9px;
+            border: none; border-radius: var(--radius-md);
+            background: var(--accent); color: white; cursor: pointer;
+            font-size: 12px; font-family: var(--font-ui); font-weight: 600;
+            transition: all var(--transition-fast);
+        }
+        .ai-config-save:hover { background: var(--accent-end); box-shadow: 0 2px 8px var(--accent-glow); }
+        .ai-status { font-size: 11px; color: var(--text-muted); margin-top: var(--space-sm); }
+        .ai-status.online { color: var(--status-success-color); }
+
+        /* ── Minimal Bar ── */
+        .minimal-bar {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 1000;
+            background: var(--minimal-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: none; align-items: center; gap: 14px;
+            transition: all var(--transition-normal);
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.06);
+        }
+        .minimal-bar.visible { display: flex; }
+        .minimal-bar .progress-bar { flex: 1; height: 4px; }
+        .minimal-bar button {
+            padding: 7px 16px; border: none; border-radius: var(--radius-sm);
+            background: var(--accent); color: white; cursor: pointer; font-size: 14px;
+            font-family: var(--font-ui);
+            transition: all var(--transition-fast);
+        }
+        .minimal-bar button:hover { box-shadow: 0 2px 8px var(--accent-glow); transform: translateY(-1px); }
+        .minimal-bar .progress-pct { font-size: 12px; color: var(--accent); font-weight: 600; min-width: 40px; text-align: left; }
+        .minimal-bar .progress-count { font-size: 12px; color: var(--text-secondary); min-width: 80px; text-align: right; }
+        .minimal-exit {
+            background: var(--border-color) !important; color: var(--text-primary) !important;
+            font-size: 12px !important; padding: 7px 12px !important;
+        }
+        .minimal-exit:hover { background: var(--accent) !important; color: white !important; }
+
+        .minimal-toggle {
+            position: absolute; top: var(--space-md); right: var(--space-md);
+            padding: 5px 10px;
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            background: var(--bg-input); color: var(--text-muted); cursor: pointer;
+            font-size: 11px; font-family: var(--font-ui); z-index: 1;
+            transition: all var(--transition-fast); font-weight: 500;
+        }
+        .minimal-toggle:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-hover); }
+
+        /* ── Minimal Mode ── */
+        .body-minimal .container { max-width: 800px; }
+        .body-minimal .header, .body-minimal .controls,
+        .body-minimal .checkbox-group, .body-minimal .paste-section, .body-minimal .sidebar,
+        .body-minimal .ai-panel, .body-minimal .history-panel, .body-minimal .section-label { display: none !important; }
+        .body-minimal .main-layout { display: block; }
+        .body-minimal .reading-section { min-height: 90vh; }
+        .body-minimal .reading-area { height: 90vh; border: none; border-radius: 0; font-size: 18px; line-height: 2.4; }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; transition: background var(--transition-fast); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+        /* ── Responsive ── */
+        @media (max-width: 1200px) {
+            .main-layout { grid-template-columns: 200px 1fr 220px; }
+            .ai-panel { display: none !important; }
+            .history-panel, .reading-area { height: 500px; }
+        }
+        @media (max-width: 960px) {
+            body { padding: 16px; }
+            .container { padding: var(--space-xl); border-radius: var(--radius-xl); }
+            .main-layout { grid-template-columns: 1fr 220px; grid-template-rows: auto auto; }
+            .history-panel { height: 180px; grid-column: 1 / 2; order: 2; }
+            .reading-section { grid-column: 1 / 2; order: 1; }
+            .reading-area { height: 450px; }
+            .sidebar { grid-column: 2 / 3; grid-row: 1 / 3; order: 3; align-self: start; }
+        }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: var(--space-lg); border-radius: var(--radius-lg); }
+            .header { margin-bottom: var(--space-md); }
+            h1 { font-size: 18px; }
+            .main-layout { grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: var(--space-md); }
+            .history-panel { height: 160px; grid-column: 1; order: 1; }
+            .reading-section { grid-column: 1; order: 2; }
+            .reading-area { height: 350px; padding: var(--space-xl); }
+            .sidebar { grid-column: 1; order: 3; }
+            .controls { gap: var(--space-sm); }
+            .minimal-bar { padding: 10px var(--space-md); gap: 10px; }
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .ai-output.loading { animation: pulse 1.5s ease-in-out infinite; }
+
+        /* ── Selection ── */
+        ::selection {
+            background: var(--accent-light);
+            color: var(--text-highlight);
+        }
+
+        /* ── Focus Visible ── */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        button:focus:not(:focus-visible),
+        select:focus:not(:focus-visible),
+        input:focus:not(:focus-visible) {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>文本转语音阅读器</h1>
+            <div class="theme-switcher">
+                <button class="theme-btn theme-btn-light active" data-theme="light" title="纸质模式"></button>
+                <button class="theme-btn theme-btn-dark" data-theme="dark" title="深色模式"></button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-group" style="flex: 2;">
+                <label for="voiceSelect">语音</label>
+                <select id="voiceSelect"></select>
+            </div>
+            <div class="control-group">
+                <label for="rateRange">语速：<span id="rateValue">1.0</span></label>
+                <input type="range" id="rateRange" min="0.3" max="3" step="0.1" value="1">
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="markdownFilter" checked>
+            <label for="markdownFilter">朗读时跳过 Markdown 语法符号</label>
+        </div>
+
+        <div class="paste-section">
+            <div class="paste-header" id="pasteHeader">
+                <span class="section-label"><span>📝</span> 原文输入</span>
+                <span class="expand-hint" id="pasteToggleHint">点击折叠</span>
+            </div>
+            <div class="paste-body" id="pasteBody">
+                <textarea class="paste-area" id="textInput" placeholder="请粘贴要朗读的文本..."></textarea>
+                <div class="char-count" id="charCount"></div>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <div class="history-panel">
+                <div class="history-header">
+                    <span class="history-title">📜 历史记录</span>
+                    <button class="history-clear" id="historyClearBtn">清空</button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <div class="history-empty">暂无历史记录</div>
+                </div>
+                <button class="btn-new-record" id="newRecordBtn">+ 新增记录</button>
+                <button class="btn-recycle-bin" id="recycleBinBtn">🗑️ 回收站<span class="recycle-badge" id="recycleBadge">0</span></button>
+                <div class="recycle-panel" id="recyclePanel">
+                    <div class="recycle-title">🗑️ 已删除记录</div>
+                    <div id="recycleList"><div class="recycle-empty">回收站为空</div></div>
+                </div>
+            </div>
+
+            <div class="reading-section">
+                <button class="minimal-toggle" id="minimalBtn">📖 极简</button>
+                <div class="reading-area" id="readingArea">
+                    <p style="color: var(--text-muted); text-align: center; margin-top: 200px; font-size: 16px;">开始朗读后，文本将显示在这里</p>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="sidebar-panel">
+                    <div class="sidebar-title">🎮 播放控制</div>
+                    <div class="btn-group">
+                        <button class="btn-play" id="playBtn">▶️ 开始朗读</button>
+                        <div class="btn-group-row">
+                            <button class="btn-skip" id="skipBackBtn" disabled>⏮️ 上一句</button>
+                            <button class="btn-skip" id="skipForwardBtn" disabled>⏭️ 下一句</button>
+                        </div>
+                        <button class="btn-stop" id="stopBtn" disabled>⏹️ 停止</button>
+                    </div>
+                </div>
+                <div class="sidebar-panel">
+                    <div class="sidebar-title">📋 操作</div>
+                    <div class="btn-group">
+                        <button class="btn-secondary" id="pasteBtn"> 从剪贴板粘贴</button>
+                        <button class="btn-secondary" id="restartBtn" disabled>🔄 从头开始</button>
+                    </div>
+                </div>
+                <div class="sidebar-panel">
+                    <div class="sidebar-title">📊 进度</div>
+                    <div class="progress-section">
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress-bar-fill" id="progressBarFill"></div>
+                        </div>
+                        <div class="progress-row">
+                            <span class="progress-pct" id="progressPct">0%</span>
+                            <span class="progress-count" id="progressCount">0 / 0</span>
+                        </div>
+                    </div>
+                    <div class="status" id="status"></div>
+                    <div class="voice-info" id="voiceInfo"></div>
+                </div>
+            </div>
+
+            <div class="ai-panel" id="aiPanel">
+                <div class="ai-panel-title">🤖 AI 总结</div>
+                <div class="ai-btn-group">
+                    <div class="ai-btn-group-row">
+                        <button class="ai-btn" id="aiDeepBtn">🔍 深入剖析</button>
+                        <button class="ai-btn" id="aiOneLineBtn">💬 一句话总结</button>
+                    </div>
+                    <div class="ai-btn-group-row">
+                        <button class="ai-btn" id="aiCoreBtn">💡 核心观点</button>
+                        <button class="ai-btn" id="aiKeywordsBtn">🏷️ 关键词</button>
+                    </div>
+                </div>
+                <div class="ai-output" id="aiOutput"></div>
+                <button class="ai-config-toggle" id="aiConfigToggle">⚙️ 配置 AI 模型 API</button>
+                <div class="ai-config-panel" id="aiConfigPanel">
+                    <label>模型提供商</label>
+                    <select id="aiProvider">
+                        <option value="openai">OpenAI (GPT-4 / GPT-3.5)</option>
+                        <option value="anthropic">Anthropic (Claude)</option>
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="openrouter">OpenRouter (聚合)</option>
+                        <option value="ollama">Ollama (本地)</option>
+                        <option value="siliconflow">硅基流动 (SiliconFlow)</option>
+                        <option value="aliyun">阿里云百炼</option>
+                        <option value="tencent">腾讯云</option>
+                    </select>
+                    <label>API 地址</label>
+                    <input type="text" id="aiApiUrl" placeholder="https://api.openai.com/v1/chat/completions">
+                    <label>API Key</label>
+                    <input type="password" id="aiApiKey" placeholder="sk-...">
+                    <label>模型名称</label>
+                    <input type="text" id="aiModel" placeholder="gpt-4o-mini">
+                    <label>最大Token数</label>
+                    <input type="number" id="aiMaxTokens" placeholder="2048" value="2048">
+                    <label>温度 (0-2)</label>
+                    <input type="number" id="aiTemperature" placeholder="0.7" value="0.7" step="0.1" min="0" max="2">
+                    <button class="ai-config-save" id="aiConfigSave">保存配置</button>
+                    <button class="ai-config-save" id="aiConfigTest" style="background: var(--btn-continue); margin-top: 5px;">测试连接</button>
+                    <div class="ai-status" id="aiStatus"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="minimal-bar" id="minimalBar">
+        <button id="minimalPlayBtn">▶️</button>
+        <button id="minimalPauseBtn">⏸️</button>
+        <button id="minimalStopBtn">⏹️</button>
+        <div class="progress-bar" id="minimalProgressBar">
+            <div class="progress-bar-fill" id="minimalProgressFill"></div>
+        </div>
+        <span class="progress-pct" id="minimalProgressPct">0%</span>
+        <span class="progress-count" id="minimalProgressCount">0 / 0</span>
+        <button class="minimal-exit" id="minimalExitBtn">退出极简</button>
+    </div>
+
+    <script>
+        let synth = window.speechSynthesis;
+        let voices = [];
+        let currentUtterance = null;
+        let lastCharIndex = 0;
+        let filteredText = '';
+        let sentenceElements = [];
+        let errorOccurred = false;
+        let isReading = false;
+        let wasInterrupted = false;
+        let isPaused = false;
+        let isPasteExpanded = true;
+        let currentTheme = localStorage.getItem('tts-theme') || 'light';
+
+        const textInput = document.getElementById('textInput');
+        const readingArea = document.getElementById('readingArea');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const rateRange = document.getElementById('rateRange');
+        const rateValue = document.getElementById('rateValue');
+        const markdownFilter = document.getElementById('markdownFilter');
+        const playBtn = document.getElementById('playBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const pasteBtn = document.getElementById('pasteBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const skipBackBtn = document.getElementById('skipBackBtn');
+        const skipForwardBtn = document.getElementById('skipForwardBtn');
+        const statusEl = document.getElementById('status');
+        const progressBar = document.getElementById('progressBar');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const progressPct = document.getElementById('progressPct');
+        const progressCount = document.getElementById('progressCount');
+        const voiceInfo = document.getElementById('voiceInfo');
+        const charCount = document.getElementById('charCount');
+        const historyList = document.getElementById('historyList');
+        const historyClearBtn = document.getElementById('historyClearBtn');
+        const newRecordBtn = document.getElementById('newRecordBtn');
+        const minimalBtn = document.getElementById('minimalBtn');
+        const minimalBar = document.getElementById('minimalBar');
+        const minimalPlayBtn = document.getElementById('minimalPlayBtn');
+        const minimalPauseBtn = document.getElementById('minimalPauseBtn');
+        const minimalStopBtn = document.getElementById('minimalStopBtn');
+        const minimalProgressFill = document.getElementById('minimalProgressFill');
+        const minimalProgressPct = document.getElementById('minimalProgressPct');
+        const minimalProgressCount = document.getElementById('minimalProgressCount');
+        const minimalExitBtn = document.getElementById('minimalExitBtn');
+        const pasteHeader = document.getElementById('pasteHeader');
+        const pasteBody = document.getElementById('pasteBody');
+        const pasteToggleHint = document.getElementById('pasteToggleHint');
+        const aiDeepBtn = document.getElementById('aiDeepBtn');
+        const aiOneLineBtn = document.getElementById('aiOneLineBtn');
+        const aiCoreBtn = document.getElementById('aiCoreBtn');
+        const aiKeywordsBtn = document.getElementById('aiKeywordsBtn');
+        const aiOutput = document.getElementById('aiOutput');
+        const recycleBinBtn = document.getElementById('recycleBinBtn');
+        const recyclePanel = document.getElementById('recyclePanel');
+        const recycleList = document.getElementById('recycleList');
+        const recycleBadge = document.getElementById('recycleBadge');
+        const aiConfigToggle = document.getElementById('aiConfigToggle');
+        const aiConfigPanel = document.getElementById('aiConfigPanel');
+        const aiConfigSave = document.getElementById('aiConfigSave');
+        const aiProvider = document.getElementById('aiProvider');
+        const aiApiUrl = document.getElementById('aiApiUrl');
+        const aiApiKey = document.getElementById('aiApiKey');
+        const aiModel = document.getElementById('aiModel');
+        const aiMaxTokens = document.getElementById('aiMaxTokens');
+        const aiTemperature = document.getElementById('aiTemperature');
+        const aiStatus = document.getElementById('aiStatus');
+
+        let currentActiveHistoryId = null;
+
+        let aiConfig = JSON.parse(localStorage.getItem('tts-ai-config') || '{}');
+        let isConfigVisible = false;
+
+        function loadSettings() {
+            const sv = localStorage.getItem('tts-voice');
+            const sr = localStorage.getItem('tts-rate');
+            const sm = localStorage.getItem('tts-markdown');
+            if (sr) { rateRange.value = sr; rateValue.textContent = sr; }
+            if (sm !== null) markdownFilter.checked = sm === 'true';
+            return { voice: sv };
+        }
+
+        function saveSettings() {
+            localStorage.setItem('tts-voice', voiceSelect.value);
+            localStorage.setItem('tts-rate', rateRange.value);
+            localStorage.setItem('tts-markdown', markdownFilter.checked);
+        }
+
+        function saveProgress() {
+            const text = textInput.value;
+            if (!text || !filteredText) return;
+            const histories = JSON.parse(localStorage.getItem('tts-histories') || '[]');
+            const currentId = histories.find(h => h.text === text)?.id;
+            localStorage.setItem('tts-last-text', text);
+            localStorage.setItem('tts-last-filtered', filteredText);
+            localStorage.setItem('tts-last-pos', lastCharIndex.toString());
+            localStorage.setItem('tts-last-time', Date.now().toString());
+            if (currentId) {
+                const idx = histories.findIndex(h => h.id === currentId);
+                if (idx !== -1) {
+                    histories[idx].lastPos = lastCharIndex;
+                    histories[idx].lastTime = Date.now();
+                    localStorage.setItem('tts-histories', JSON.stringify(histories));
+                }
+            }
+        }
+
+        function formatTimeAgo(ms) {
+            const mins = Math.floor(ms / 60000);
+            if (mins < 60) return mins + '分钟';
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return hrs + '小时';
+            return Math.floor(hrs / 24) + '天';
+        }
+
+        function formatVoiceName(v) {
+            const name = v.name;
+            const lang = v.lang;
+            let friendly = name;
+            if (name.includes('Xiaoxiao')) friendly = '晓晓';
+            else if (name.includes('Yunxi')) friendly = '云希';
+            else if (name.includes('Yunjian')) friendly = '云健';
+            else if (name.includes('Yunyang')) friendly = '云扬';
+            else if (name.includes('Yunfeng')) friendly = '云峰';
+            else if (name.includes('Yunze')) friendly = '云泽';
+            else if (name.includes('Yunhao')) friendly = '云浩';
+            else if (name.includes('Yunye')) friendly = '云野';
+            else if (name.includes('Zhiyu')) friendly = '知宇';
+            else if (name.includes('Huihui')) friendly = '慧慧';
+            else if (name.includes('Kangkang')) friendly = '康康';
+            else if (name.includes('Yaoyao')) friendly = '瑶瑶';
+            else if (name.includes('Microsoft')) friendly = name.replace('Microsoft ', '').split('(')[0].trim();
+
+            let langTag = '';
+            if (lang.startsWith('zh-CN')) langTag = '中文普通话';
+            else if (lang.startsWith('zh-TW')) langTag = '中文台湾';
+            else if (lang.startsWith('zh-HK')) langTag = '中文粤语';
+            else if (lang.startsWith('en-US')) langTag = '英文美式';
+            else if (lang.startsWith('en-GB')) langTag = '英文英式';
+            else if (lang.startsWith('ja-JP')) langTag = '日文';
+            else if (lang.startsWith('ko-KR')) langTag = '韩文';
+            else langTag = lang;
+
+            let voiceType = '';
+            if (name.includes('Neural') || name.includes('Natural')) voiceType = '自然女声';
+            else if (name.includes('Male') || name.includes('男')) voiceType = '男声';
+            else if (name.includes('Female') || name.includes('女')) voiceType = '女声';
+
+            let parts = [friendly];
+            if (langTag) parts.push(langTag);
+            if (voiceType) parts.push(voiceType);
+            return parts.join('\uff5c');
+        }
+
+        function loadVoices() {
+            voices = synth.getVoices().filter(v => v.lang.startsWith('zh') || v.lang.startsWith('en'));
+            if (voices.length === 0) { setTimeout(loadVoices, 500); return; }
+            voiceSelect.innerHTML = voices.map(function(v, i) {
+                return '<option value="' + i + '">' + formatVoiceName(v) + '</option>';
+            }).join('');
+            const s = loadSettings();
+            if (s.voice) voiceSelect.value = s.voice;
+            else { const zh = voices.findIndex(v => v.lang.startsWith('zh')); if (zh !== -1) voiceSelect.value = zh; }
+            updateVoiceInfo();
+        }
+
+        function updateVoiceInfo() {
+            const sv = voices[voiceSelect.value];
+            if (sv) voiceInfo.textContent = formatVoiceName(sv);
+        }
+
+        function showStatus(msg, type) {
+            type = type || 'info';
+            statusEl.textContent = msg;
+            statusEl.className = 'status ' + type;
+        }
+
+        function updateProgress(pct) {
+            const fill = Math.min(100, pct);
+            progressBarFill.style.width = fill + '%';
+            minimalProgressFill.style.width = fill + '%';
+            const totalChars = filteredText.length;
+            const readChars = Math.floor((pct / 100) * totalChars);
+            const pctText = Math.round(pct) + '%';
+            const countText = readChars + ' / ' + totalChars;
+            progressPct.textContent = pctText;
+            progressCount.textContent = countText;
+            minimalProgressPct.textContent = pctText;
+            minimalProgressCount.textContent = countText;
+        }
+
+        function updatePlayButton() {
+            if (synth.speaking && !isPaused) {
+                playBtn.textContent = '⏸️ 暂停';
+                playBtn.className = 'btn-play';
+                playBtn.style.background = 'var(--accent)';
+            } else if (isPaused) {
+                playBtn.textContent = '▶️ 继续';
+                playBtn.className = 'btn-play';
+                playBtn.style.background = 'var(--btn-continue)';
+            } else {
+                playBtn.textContent = '▶️ 开始朗读';
+                playBtn.className = 'btn-play';
+                playBtn.style.background = '';
+            }
+        }
+
+        function updateButtons() {
+            const spk = synth.speaking;
+            stopBtn.disabled = !spk && !isPaused;
+            restartBtn.disabled = !wasInterrupted && !errorOccurred && !spk;
+            skipBackBtn.disabled = !spk && !isPaused && !wasInterrupted;
+            skipForwardBtn.disabled = !spk && !isPaused && !wasInterrupted;
+            updatePlayButton();
+            minimalPlayBtn.style.display = spk && !isPaused ? 'none' : '';
+            minimalPauseBtn.style.display = spk && !isPaused ? '' : 'none';
+        }
+
+        function clearHighlights() {
+            readingArea.querySelectorAll('.sentence.current').forEach(function(w) { w.classList.remove('current'); });
+        }
+
+        function highlightSentence(charIndex) {
+            clearHighlights();
+            for (const s of sentenceElements) {
+                if (charIndex >= s.start && charIndex < s.end) {
+                    s.el.classList.add('current');
+                    s.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+            }
+        }
+
+        function highlightSentenceByIndex(charIndex) {
+            clearHighlights();
+            for (const s of sentenceElements) {
+                if (charIndex >= s.start && charIndex < s.end) {
+                    s.el.classList.add('current');
+                    break;
+                }
+            }
+            if (sentenceElements.length > 0 && !readingArea.querySelector('.sentence.current')) {
+                const match = sentenceElements.find(function(s) { return charIndex <= s.start; });
+                if (match) match.el.classList.add('current');
+            }
+        }
+
+        function prepareReadingArea() {
+            sentenceElements = [];
+            const chars = [...filteredText];
+            let html = '';
+            let inSentence = false;
+            let sentenceStart = -1;
+            let sentenceText = '';
+            let globalIdx = 0;
+
+            for (let i = 0; i < chars.length; i++) {
+                const ch = chars[i];
+                const isSentenceEnd = /[。！？；.!?\n]/.test(ch) || ch === '\n';
+
+                if (isSentenceEnd) {
+                    if (inSentence && sentenceText.trim()) {
+                        const boundary = globalIdx + 1;
+                        html += '<span class="sentence" data-start="' + sentenceStart + '" data-end="' + boundary + '">' + escapeHtml(sentenceText) + '</span>';
+                        sentenceElements.push({ start: sentenceStart, end: boundary, el: null });
+                    }
+                    if (ch === '\n') html += '<br>';
+                    inSentence = false;
+                    sentenceText = '';
+                    globalIdx++;
+                } else {
+                    if (!inSentence) {
+                        sentenceStart = globalIdx;
+                        sentenceText = '';
+                        inSentence = true;
+                    }
+                    sentenceText += ch;
+                    globalIdx++;
+                }
+            }
+
+            if (inSentence && sentenceText.trim()) {
+                html += '<span class="sentence" data-start="' + sentenceStart + '" data-end="' + globalIdx + '">' + escapeHtml(sentenceText) + '</span>';
+                sentenceElements.push({ start: sentenceStart, end: globalIdx, el: null });
+            }
+
+            readingArea.innerHTML = '<div>' + html + '</div>';
+            readingArea.querySelectorAll('.sentence').forEach(function(span) {
+                const start = parseInt(span.dataset.start);
+                const idx = sentenceElements.findIndex(function(s) { return s.start === start; });
+                if (idx !== -1) sentenceElements[idx].el = span;
+            });
+            readingArea.classList.add('active');
+
+            // 滚动到上次阅读位置
+            scrollToLastPosition();
+        }
+
+        function scrollToLastPosition() {
+            if (lastCharIndex <= 0) return;
+            // 找到当前句子元素并滚动到视图中
+            for (let i = 0; i < sentenceElements.length; i++) {
+                if (sentenceElements[i].el && lastCharIndex >= sentenceElements[i].start && lastCharIndex < sentenceElements[i].end) {
+                    sentenceElements[i].el.scrollIntoView({ behavior: 'auto', block: 'center' });
+                    break;
+                }
+            }
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function filterMarkdown(text) {
+            if (!markdownFilter.checked) return text;
+            let f = text;
+            f = f.replace(/```[\s\S]*?```/g, '');
+            f = f.replace(/`([^`]+)`/g, '$1');
+            f = f.replace(/^#{1,6}\s+/gm, '');
+            f = f.replace(/\*\*([^*]+)\*\*/g, '$1');
+            f = f.replace(/\*([^*]+)\*/g, '$1');
+            f = f.replace(/__([^_]+)__/g, '$1');
+            f = f.replace(/_([^_]+)_/g, '$1');
+            f = f.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+            f = f.replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1');
+            f = f.replace(/^>\s+/gm, '');
+            f = f.replace(/^[-*]\s+/gm, '');
+            f = f.replace(/^\d+\.\s+/gm, '');
+            f = f.replace(/^[-*_]{3,}$/gm, '');
+            f = f.replace(/<[^>]*>/g, '');
+            return f.trim();
+        }
+
+        function startSpeaking(textToSpeak, startIndex) {
+            synth.cancel();
+            isPaused = false;
+            currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
+            const sv = voices[voiceSelect.value];
+            if (sv) currentUtterance.voice = sv;
+            currentUtterance.rate = parseFloat(rateRange.value);
+            errorOccurred = false;
+            isReading = true;
+            wasInterrupted = false;
+
+            currentUtterance.onstart = function() {
+                showStatus('正在朗读...', 'success');
+                updateButtons();
+            };
+
+            currentUtterance.onend = function() {
+                isReading = false;
+                isPaused = false;
+                wasInterrupted = false;
+                if (!errorOccurred) {
+                    showStatus('朗读完成', 'success');
+                    updateProgress(100);
+                    lastCharIndex = filteredText.length;
+                    saveProgress();
+                    setTimeout(function() {
+                        readingArea.classList.remove('active');
+                        clearHighlights();
+                    }, 1000);
+                }
+                updateButtons();
+            };
+
+            currentUtterance.onerror = function(ev) {
+                if (ev.error !== 'canceled') {
+                    errorOccurred = true;
+                    wasInterrupted = true;
+                    isReading = false;
+                    saveProgress();
+                    showStatus('朗读中断，请手动继续', 'error');
+                    updateButtons();
+                }
+                updateButtons();
+            };
+
+            currentUtterance.onboundary = function(ev) {
+                if (ev.name === 'word' || ev.name === 'sentence') {
+                    const pos = startIndex + ev.charIndex;
+                    const pct = (pos / filteredText.length) * 100;
+                    updateProgress(pct);
+                    highlightSentence(pos);
+                    lastCharIndex = pos;
+                    saveProgress();
+                }
+            };
+
+            synth.speak(currentUtterance);
+            saveSettings();
+        }
+
+        function speakText(startFromLast) {
+            startFromLast = startFromLast || false;
+            const text = textInput.value.trim();
+            if (!text) { showStatus('请输入要朗读的文本', 'error'); return; }
+
+            filteredText = filterMarkdown(text);
+            if (!filteredText) { showStatus('过滤后没有可朗读的内容', 'error'); return; }
+
+            if (!startFromLast) lastCharIndex = 0;
+            prepareReadingArea();
+
+            let textToSpeak = filteredText;
+            let startIndex = 0;
+            if (startFromLast && lastCharIndex > 0 && lastCharIndex < filteredText.length) {
+                textToSpeak = filteredText.substring(lastCharIndex);
+                startIndex = lastCharIndex;
+                if (!textToSpeak.trim()) {
+                    showStatus('已经朗读到文末', 'success');
+                    isReading = false;
+                    wasInterrupted = false;
+                    readingArea.classList.remove('active');
+                    clearHighlights();
+                    updateButtons();
+                    return;
+                }
+            }
+            startSpeaking(textToSpeak, startIndex);
+        }
+
+        function jumpSentence(direction) {
+            if (sentenceElements.length === 0) return;
+            let currentIdx = -1;
+            for (let i = 0; i < sentenceElements.length; i++) {
+                if (lastCharIndex >= sentenceElements[i].start && lastCharIndex < sentenceElements[i].end) {
+                    currentIdx = i;
+                    break;
+                }
+            }
+            const nextIdx = currentIdx + direction;
+            if (nextIdx < 0 || nextIdx >= sentenceElements.length) {
+                lastCharIndex = direction < 0 ? 0 : filteredText.length;
+            } else {
+                lastCharIndex = sentenceElements[nextIdx].start;
+            }
+            highlightSentence(lastCharIndex);
+            if (synth.speaking || synth.paused) {
+                synth.cancel();
+                const textToSpeak = filteredText.substring(lastCharIndex);
+                if (textToSpeak.trim()) startSpeaking(textToSpeak, lastCharIndex);
+            } else {
+                showStatus('跳转到' + (direction < 0 ? '上' : '下') + '一句', 'info');
+            }
+        }
+
+        function addHistory(text) {
+            if (!text.trim()) return;
+            const histories = JSON.parse(localStorage.getItem('tts-histories') || '[]');
+            const existing = histories.findIndex(function(h) { return h.text === text; });
+            if (existing !== -1) histories.splice(existing, 1);
+            histories.unshift({
+                id: Date.now(),
+                text: text,
+                filtered: filterMarkdown(text),
+                timestamp: Date.now(),
+                charCount: text.length,
+                lastPos: 0,
+                lastTime: 0
+            });
+            if (histories.length > 50) histories.pop();
+            localStorage.setItem('tts-histories', JSON.stringify(histories));
+            renderHistory();
+        }
+
+        function loadHistory(id, resumePos) {
+            resumePos = resumePos || 0;
+            const histories = JSON.parse(localStorage.getItem('tts-histories') || '[]');
+            const item = histories.find(function(h) { return h.id === id; });
+            if (!item) return;
+            textInput.value = item.text;
+            filteredText = item.filtered;
+            lastCharIndex = resumePos || 0;
+            currentActiveHistoryId = id;
+            updateCharCount();
+            prepareReadingArea();
+            if (lastCharIndex > 0) highlightSentenceByIndex(lastCharIndex);
+            renderHistory(id);
+            // 恢复该记录的 AI 总结缓存
+            restoreAICache(id);
+        }
+
+        function moveToRecycleBin(id) {
+            var histories = JSON.parse(localStorage.getItem('tts-histories') || '[]');
+            var recycleBin = JSON.parse(localStorage.getItem('tts-recycle-bin') || '[]');
+            var idx = histories.findIndex(function(h) { return h.id === id; });
+            if (idx !== -1) {
+                var item = histories.splice(idx, 1)[0];
+                item.deletedTime = Date.now();
+                recycleBin.unshift(item);
+                if (recycleBin.length > 30) recycleBin.pop();
+                localStorage.setItem('tts-histories', JSON.stringify(histories));
+                localStorage.setItem('tts-recycle-bin', JSON.stringify(recycleBin));
+                renderHistory();
+                renderRecycleBin();
+            }
+        }
+
+        function restoreFromRecycleBin(id) {
+            var recycleBin = JSON.parse(localStorage.getItem('tts-recycle-bin') || '[]');
+            var histories = JSON.parse(localStorage.getItem('tts-histories') || '[]');
+            var idx = recycleBin.findIndex(function(h) { return h.id === id; });
+            if (idx !== -1) {
+                var item = recycleBin.splice(idx, 1)[0];
+                delete item.deletedTime;
+                histories.unshift(item);
+                localStorage.setItem('tts-histories', JSON.stringify(histories));
+                localStorage.setItem('tts-recycle-bin', JSON.stringify(recycleBin));
+                renderHistory();
+                renderRecycleBin();
+                showStatus('已恢复记录', 'success');
+            }
+        }
+
+        function permanentlyDelete(id) {
+            if (!confirm('确定要彻底删除此记录吗？此操作不可恢复。')) return;
+            var recycleBin = JSON.parse(localStorage.getItem('tts-recycle-bin') || '[]');
+            recycleBin = recycleBin.filter(function(h) { return h.id !== id; });
+            localStorage.setItem('tts-recycle-bin', JSON.stringify(recycleBin));
+            renderRecycleBin();
+            showStatus('已彻底删除', 'info');
+        }
+
+        function emptyRecycleBin() {
+            if (!confirm('确定要清空回收站吗？此操作不可恢复。')) return;
+            localStorage.setItem('tts-recycle-bin', '[]');
+            renderRecycleBin();
+            showStatus('回收站已清空', 'info');
+        }
+
+        function renderRecycleBin() {
+            var recycleBin = JSON.parse(localStorage.getItem('tts-recycle-bin') || '[]');
+            var count = recycleBin.length;
+            recycleBadge.textContent = count;
+            recycleBadge.classList.toggle('visible', count > 0);
+
+            if (count === 0) {
+                recycleList.innerHTML = '<div class="recycle-empty">回收站为空</div>';
+                return;
+            }
+
+            var html = '<button class="recycle-btn-delete" style="width:100%;margin-bottom:8px;" onclick="emptyRecycleBin()">清空回收站</button>';
+            html += recycleBin.map(function(h) {
+                return '<div class="recycle-item">' +
+                    '<div class="recycle-item-text">' + escapeHtml(h.text.substring(0, 50)) + '</div>' +
+                    '<div class="recycle-item-actions">' +
+                    '<button class="recycle-btn-restore" data-id="' + h.id + '">恢复</button>' +
+                    '<button class="recycle-btn-delete" data-id="' + h.id + '">彻底删除</button>' +
+                    '</div></div>';
+            }).join('');
+            recycleList.innerHTML = html;
+
+            recycleList.querySelectorAll('.recycle-btn-restore').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    restoreFromRecycleBin(parseInt(btn.dataset.id));
+                });
+            });
+            recycleList.querySelectorAll('.recycle-btn-delete').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    permanentlyDelete(parseInt(btn.dataset.id));
+                });
+            });
+        }
+
+        function deleteHistory(id) {
+            moveToRecycleBin(id);
+        }
+
+        function clearHistory() {
+            if (!confirm('确定要清空所有历史记录吗？已删除的记录可在回收站中恢复。')) return;
+            var histories = JSON.parse(localStorage.getItem('tts-histories') || '[]');
+            var recycleBin = JSON.parse(localStorage.getItem('tts-recycle-bin') || '[]');
+            // 将现有记录移到回收站
+            histories.forEach(function(h) {
+                h.deletedTime = Date.now();
+                if (!recycleBin.find(function(r) { return r.id === h.id; })) {
+                    recycleBin.unshift(h);
+                }
+            });
+            if (recycleBin.length > 30) recycleBin = recycleBin.slice(0, 30);
+            localStorage.setItem('tts-histories', '[]');
+            localStorage.setItem('tts-recycle-bin', JSON.stringify(recycleBin));
+            renderHistory();
+            renderRecycleBin();
+        }
+
+        function renderHistory(activeId) {
+            activeId = activeId || null;
+            const histories = JSON.parse(localStorage.getItem('tts-histories') || '[]');
+            if (histories.length === 0) {
+                historyList.innerHTML = '<div class="history-empty">暂无历史记录</div>';
+                return;
+            }
+            historyList.innerHTML = histories.map(function(h) {
+                const hasResume = h.lastPos > 0 && h.lastPos < h.charCount;
+                const continueBtn = hasResume
+                    ? '<div class="history-item-continue" data-id="' + h.id + '" data-pos="' + h.lastPos + '">▶ 继续上次 (' + Math.round((h.lastPos / h.charCount) * 100) + '%)</div>'
+                    : '';
+                return '<div class="history-item ' + (h.id === activeId ? 'active' : '') + '" data-id="' + h.id + '">' +
+                    '<div class="history-item-text">' + escapeHtml(h.text.substring(0, 60)) + '</div>' +
+                    '<div class="history-item-meta">' + h.charCount + '字 · ' + formatDate(h.timestamp) + '</div>' +
+                    continueBtn +
+                    '<button class="history-item-delete" data-id="' + h.id + '" title="删除">×</button></div>';
+            }).join('');
+
+            historyList.querySelectorAll('.history-item').forEach(function(el) {
+                el.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('history-item-delete') || e.target.classList.contains('history-item-continue')) return;
+                    loadHistory(parseInt(el.dataset.id));
+                });
+            });
+            historyList.querySelectorAll('.history-item-delete').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    deleteHistory(parseInt(btn.dataset.id));
+                });
+            });
+            historyList.querySelectorAll('.history-item-continue').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    loadHistory(parseInt(btn.dataset.id), parseInt(btn.dataset.pos));
+                    setTimeout(function() {
+                        if (synth.speaking) synth.cancel();
+                        const textToSpeak = filteredText.substring(lastCharIndex);
+                        if (textToSpeak.trim()) startSpeaking(textToSpeak, lastCharIndex);
+                    }, 100);
+                });
+            });
+        }
+
+        function formatDate(ts) {
+            const d = new Date(ts);
+            const now = new Date();
+            const diff = now - d;
+            if (diff < 60000) return '刚刚';
+            if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+            return (d.getMonth() + 1) + '/' + d.getDate();
+        }
+
+        function updateCharCount() {
+            const text = textInput.value;
+            charCount.textContent = text ? text.length + ' 字符' : '';
+        }
+
+        function applyTheme(theme) {
+            currentTheme = theme;
+            document.body.setAttribute('data-theme', theme === 'light' ? '' : theme);
+            localStorage.setItem('tts-theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(function(btn) {
+                btn.classList.toggle('active', btn.dataset.theme === theme);
+            });
+        }
+
+        function setMinimal(on) {
+            document.body.classList.toggle('body-minimal', on);
+            minimalBar.classList.toggle('visible', on);
+            minimalBtn.style.display = on ? 'none' : '';
+            localStorage.setItem('tts-minimal', on ? '1' : '0');
+        }
+
+        function togglePaste() {
+            isPasteExpanded = !isPasteExpanded;
+            pasteBody.classList.toggle('collapsed', !isPasteExpanded);
+            pasteToggleHint.textContent = isPasteExpanded ? '点击折叠' : '点击展开';
+        }
+
+        function loadAIConfig() {
+            if (aiConfig.provider) aiProvider.value = aiConfig.provider;
+            if (aiConfig.apiUrl) aiApiUrl.value = aiConfig.apiUrl;
+            if (aiConfig.apiKey) aiApiKey.value = aiConfig.apiKey;
+            if (aiConfig.model) aiModel.value = aiConfig.model;
+            if (aiConfig.maxTokens) aiMaxTokens.value = aiConfig.maxTokens;
+            if (aiConfig.temperature) aiTemperature.value = aiConfig.temperature;
+            updateAIStatus();
+        }
+
+        function saveAIConfigFn() {
+            aiConfig = {
+                provider: aiProvider.value,
+                apiUrl: aiApiUrl.value,
+                apiKey: aiApiKey.value,
+                model: aiModel.value,
+                maxTokens: aiMaxTokens.value || '2048',
+                temperature: aiTemperature.value || '0.7'
+            };
+            localStorage.setItem('tts-ai-config', JSON.stringify(aiConfig));
+            updateAIStatus();
+            showStatus('AI 配置已保存', 'success');
+        }
+
+        function updateAIStatus() {
+            var hasKey = aiApiKey.value || aiConfig.apiKey;
+            var hasUrl = aiApiUrl.value || aiConfig.apiUrl;
+            var hasModel = aiModel.value || aiConfig.model;
+            if (hasKey && hasUrl && hasModel) {
+                aiStatus.textContent = 'API 已配置，将调用在线 AI';
+                aiStatus.className = 'ai-status online';
+            } else {
+                aiStatus.textContent = '未配置 API，将使用本地分析';
+                aiStatus.className = 'ai-status';
+            }
+        }
+
+        // 监听表单输入变化，实时更新状态
+        [aiProvider, aiApiUrl, aiApiKey, aiModel, aiMaxTokens, aiTemperature].forEach(function(el) {
+            el.addEventListener('input', updateAIStatus);
+            el.addEventListener('change', updateAIStatus);
+        });
+
+        function getPrompt(type) {
+            var prompts = {
+                deep: '请对以下文本进行深入剖析，从多个维度分析其结构、论点、逻辑和潜在含义：',
+                oneline: '请用一句话总结以下文本的核心主旨：',
+                core: '请提取以下文本的核心观点，用简洁的要点列出：',
+                keywords: '请从以下文本中提取5-10个关键词，按重要性排序：'
+            };
+            return prompts[type] || '';
+        }
+
+        function getProviderUrl(provider) {
+            var urls = {
+                openai: 'https://api.openai.com/v1/chat/completions',
+                anthropic: 'https://api.anthropic.com/v1/messages',
+                deepseek: 'https://api.deepseek.com/v1/chat/completions',
+                openrouter: 'https://openrouter.ai/api/v1/chat/completions',
+                ollama: 'http://localhost:11434/api/chat',
+                siliconflow: 'https://api.siliconflow.cn/v1/chat/completions',
+                aliyun: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+                tencent: 'https://api.lkeap.cloud.tencent.com/v1/chat/completions'
+            };
+            return urls[provider] || urls.openai;
+        }
+
+        function getDefaultModelForProvider(provider) {
+            var models = {
+                openai: 'gpt-4o-mini',
+                anthropic: 'claude-3-5-sonnet-20241022',
+                deepseek: 'deepseek-chat',
+                openrouter: 'openai/gpt-4o-mini',
+                ollama: 'llama3',
+                siliconflow: 'Qwen/Qwen2.5-72B-Instruct',
+                aliyun: 'qwen-plus',
+                tencent: 'hunyuan-lite'
+            };
+            return models[provider] || 'gpt-4o-mini';
+        }
+
+        function getApiDescription(provider) {
+            var desc = {
+                openai: 'OpenAI API Key 格式: sk-xxx...',
+                anthropic: 'Anthropic API Key 格式: sk-ant-xxx...',
+                deepseek: 'DeepSeek API Key 格式: sk-xxx...',
+                openrouter: 'OpenRouter API Key',
+                ollama: '本地Ollama无需API Key',
+                siliconflow: '硅基流动 API Key',
+                aliyun: '阿里云百炼 API Key',
+                tencent: '腾讯云 API Key'
+            };
+            return desc[provider] || '';
+        }
+
+        function getProviderHeaders(provider) {
+            var headers = { 'Content-Type': 'application/json' };
+            if (aiConfig.apiKey) {
+                if (provider === 'anthropic') headers['x-api-key'] = aiConfig.apiKey;
+                else if (provider === 'openrouter') headers['HTTP-Referer'] = window.location.href;
+                else headers['Authorization'] = 'Bearer ' + aiConfig.apiKey;
+            }
+            if (provider === 'anthropic') headers['anthropic-version'] = '2023-06-01';
+            return headers;
+        }
+
+        function buildAPIPayload(type, text) {
+            var provider = aiConfig.provider || 'openai';
+            var systemMsg = '你是一个专业的文本分析助手，请用中文回答。';
+
+            if (provider === 'anthropic') {
+                return {
+                    model: aiConfig.model || 'claude-3-sonnet-20240229',
+                    max_tokens: parseInt(aiConfig.maxTokens) || 2048,
+                    temperature: parseFloat(aiConfig.temperature) || 0.7,
+                    system: systemMsg,
+                    messages: [{ role: 'user', content: getPrompt(type) + '\n\n' + text.substring(0, 3000) }]
+                };
+            }
+            if (provider === 'ollama') {
+                return {
+                    model: aiConfig.model || 'llama3',
+                    messages: [
+                        { role: 'system', content: systemMsg },
+                        { role: 'user', content: getPrompt(type) + '\n\n' + text.substring(0, 3000) }
+                    ],
+                    stream: false
+                };
+            }
+            return {
+                model: aiConfig.model || 'gpt-4o-mini',
+                max_tokens: parseInt(aiConfig.maxTokens) || 2048,
+                temperature: parseFloat(aiConfig.temperature) || 0.7,
+                messages: [
+                    { role: 'system', content: systemMsg },
+                    { role: 'user', content: getPrompt(type) + '\n\n' + text.substring(0, 3000) }
+                ]
+            };
+        }
+
+        function callAI(type, text) {
+            var provider = aiConfig.provider || 'openai';
+            var url = aiConfig.apiUrl || getProviderUrl(provider);
+            var payload = buildAPIPayload(type, text);
+            var headers = getProviderHeaders(provider);
+
+            return fetch(url, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
+            }).then(function(response) {
+                if (!response.ok) throw new Error('API 错误 (' + response.status + ')');
+                return response.json();
+            }).then(function(data) {
+                if (provider === 'anthropic') return data.content[0].text;
+                if (provider === 'ollama') return data.message.content;
+                return data.choices[0].message.content;
+            });
+        }
+
+        function generateAILocal(type, text) {
+            var sentences = text.split(/[。！？；\n]/).filter(function(s) { return s.trim().length > 5; });
+            var words = text.split(/[\s\u3000，,、：:；;（）()【】""''《》]/).filter(function(w) { return w.length > 1; });
+            var wordFreq = {};
+            words.forEach(function(w) { wordFreq[w] = (wordFreq[w] || 0) + 1; });
+            var topWords = Object.entries(wordFreq).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 10);
+
+            var result = '';
+            if (type === 'deep') {
+                result = '文本分析报告\n\n';
+                result += '总字数：' + text.length + '\n';
+                result += '句子数：' + sentences.length + '\n';
+                result += '段落结构：约 ' + Math.ceil(sentences.length / 5) + ' 个意群\n\n';
+                result += ' 高频词汇 TOP 10：\n';
+                topWords.forEach(function(pair, i) { result += '  ' + (i + 1) + '. ' + pair[0] + '（' + pair[1] + '次）\n'; });
+                result += '\n 分析建议：\n';
+                result += '  - 文本长度 ' + (text.length > 2000 ? '较长' : '适中') + '，适合分段阅读\n';
+                result += '  - 句子数量 ' + (sentences.length > 20 ? '较多' : '较少') + '，';
+                result += sentences.length > 20 ? '信息密度较高\n' : '内容相对精炼\n';
+                if (sentences.length > 0) {
+                    result += '\n 首句预览：' + sentences[0].substring(0, 50) + '...\n';
+                    result += ' 末句预览：' + sentences[sentences.length - 1].substring(0, 50) + '...\n';
+                }
+            } else if (type === 'oneline') {
+                result = ' ' + (sentences[0] || '无法提取') + '\n\n';
+                result += '(本地分析，配置 AI API 可获取更精准总结)';
+            } else if (type === 'core') {
+                result = ' 核心观点\n\n';
+                var coreSentences = sentences.slice(0, Math.min(5, sentences.length));
+                coreSentences.forEach(function(s, i) { result += '  ' + (i + 1) + '. ' + s.substring(0, 80) + '\n'; });
+                result += '\n(配置 AI API 可获取更精准的核心观点提取)';
+            } else if (type === 'keywords') {
+                result = ' 关键词\n\n';
+                topWords.forEach(function(pair, i) { result += '  ' + (i + 1) + '. ' + pair[0] + '\n'; });
+                result += '\n(配置 AI API 可获取更精准的关键词提取)';
+            }
+            return result;
+        }
+
+        function getAICacheKey(historyId) {
+            return 'tts-ai-cache-' + historyId;
+        }
+
+        function loadAICache(historyId) {
+            if (!historyId) return null;
+            try {
+                var cache = JSON.parse(localStorage.getItem(getAICacheKey(historyId)) || 'null');
+                // Invalidate old cache entries that don't have version or contain local analysis markers
+                if (cache && (!cache._version || cache._version < 2)) return null;
+                return cache;
+            } catch (e) { return null; }
+        }
+
+        function saveAICache(historyId, type, content) {
+            if (!historyId) return;
+            var cache = loadAICache(historyId) || { _version: 2 };
+            cache._version = 2;
+            cache[type] = content;
+            cache._updatedAt = Date.now();
+            localStorage.setItem(getAICacheKey(historyId), JSON.stringify(cache));
+        }
+
+        function restoreAICache(historyId) {
+            var cache = loadAICache(historyId);
+            if (!cache) {
+                aiOutput.style.display = 'none';
+                aiOutput.textContent = '';
+                document.querySelectorAll('.ai-btn').forEach(function(b) { b.classList.remove('active'); });
+                return;
+            }
+            
+            var typeMap = ['deep', 'oneline', 'core', 'keywords'];
+            var btnMap = { deep: aiDeepBtn, oneline: aiOneLineBtn, core: aiCoreBtn, keywords: aiKeywordsBtn };
+            var foundType = null;
+            
+            for (var i = 0; i < typeMap.length; i++) {
+                if (cache[typeMap[i]]) { foundType = typeMap[i]; break; }
+            }
+            
+            if (foundType && cache[foundType]) {
+                aiOutput.style.display = 'block';
+                aiOutput.textContent = cache[foundType];
+                document.querySelectorAll('.ai-btn').forEach(function(b) { b.classList.remove('active'); });
+                if (btnMap[foundType]) btnMap[foundType].classList.add('active');
+            } else {
+                aiOutput.style.display = 'none';
+                aiOutput.textContent = '';
+                document.querySelectorAll('.ai-btn').forEach(function(b) { b.classList.remove('active'); });
+            }
+        }
+
+        function generateAI(type) {
+            var text = filteredText || textInput.value.trim();
+            if (!text) { showStatus('请先输入或朗读文本', 'error'); return; }
+
+            // 检查缓存：有缓存直接显示，不调 API
+            if (currentActiveHistoryId) {
+                var cache = loadAICache(currentActiveHistoryId);
+                if (cache && cache[type]) {
+                    aiOutput.style.display = 'block';
+                    aiOutput.textContent = cache[type];
+                    document.querySelectorAll('.ai-btn').forEach(function(b) { b.classList.remove('active'); });
+                    var btnMap = { deep: aiDeepBtn, oneline: aiOneLineBtn, core: aiCoreBtn, keywords: aiKeywordsBtn };
+                    if (btnMap[type]) btnMap[type].classList.add('active');
+                    return;
+                }
+            }
+
+            // 检查 API 配置
+            var currentApiKey = (aiApiKey.value || aiConfig.apiKey || '').trim();
+            var currentApiUrl = (aiApiUrl.value || aiConfig.apiUrl || '').trim();
+            var currentModel = (aiModel.value || aiConfig.model || '').trim();
+            var currentProvider = aiProvider.value || aiConfig.provider || 'openai';
+
+            if (!currentApiKey || !currentApiUrl || !currentModel) {
+                showStatus('请先配置 AI API', 'error');
+                return;
+            }
+
+            // 高亮按钮并显示加载状态
+            document.querySelectorAll('.ai-btn').forEach(function(b) { b.classList.remove('active'); });
+            var btnMap = { deep: aiDeepBtn, oneline: aiOneLineBtn, core: aiCoreBtn, keywords: aiKeywordsBtn };
+            if (btnMap[type]) btnMap[type].classList.add('active');
+            aiOutput.style.display = 'block';
+            aiOutput.className = 'ai-output loading';
+            aiOutput.textContent = '正在生成...';
+
+            // 自动补全 URL
+            if (!currentApiUrl.startsWith('http')) { currentApiUrl = 'https://' + currentApiUrl; }
+            var providerDefaultUrl = getProviderUrl(currentProvider);
+            if (!currentApiUrl.includes('/v1/') && !currentApiUrl.includes('/api/')) {
+                var endpointPath = providerDefaultUrl.substring(providerDefaultUrl.indexOf('/v1/'));
+                if (endpointPath) { currentApiUrl = currentApiUrl.replace(/\/+$/, '') + endpointPath; }
+            }
+            
+            var tempConfig = {
+                provider: currentProvider, apiUrl: currentApiUrl, apiKey: currentApiKey,
+                model: currentModel, maxTokens: aiMaxTokens.value || aiConfig.maxTokens || '2048',
+                temperature: aiTemperature.value || aiConfig.temperature || '0.7'
+            };
+            var originalConfig = JSON.parse(JSON.stringify(aiConfig));
+            aiConfig = tempConfig;
+
+            callAI(type, text).then(function(result) {
+                aiConfig = originalConfig;
+                aiOutput.className = 'ai-output';
+                aiOutput.textContent = result;
+                saveAICache(currentActiveHistoryId, type, result);
+            }).catch(function(err) {
+                aiConfig = originalConfig;
+                aiOutput.className = 'ai-output';
+                aiOutput.textContent = 'API 调用失败: ' + err.message;
+            });
+        }
+
+        pasteHeader.addEventListener('click', togglePaste);
+
+        playBtn.addEventListener('click', function() {
+            if (synth.speaking && !isPaused) {
+                synth.pause();
+                isPaused = true;
+                showStatus('已暂停', 'info');
+            } else if (isPaused) {
+                synth.resume();
+                isPaused = false;
+                showStatus('继续朗读中...', 'success');
+            } else {
+                addHistory(textInput.value);
+                if (errorOccurred || wasInterrupted) {
+                    lastCharIndex = 0;
+                    errorOccurred = false;
+                    wasInterrupted = false;
+                }
+                if (isPasteExpanded) togglePaste();
+                speakText(false);
+            }
+            updateButtons();
+        });
+
+        stopBtn.addEventListener('click', function() {
+            synth.cancel();
+            isReading = false;
+            isPaused = false;
+            errorOccurred = false;
+            wasInterrupted = false;
+            saveProgress();
+            showStatus('已停止', 'info');
+            readingArea.classList.remove('active');
+            clearHighlights();
+            updateButtons();
+        });
+
+        restartBtn.addEventListener('click', function() {
+            lastCharIndex = 0;
+            errorOccurred = false;
+            wasInterrupted = false;
+            speakText(false);
+        });
+
+        skipBackBtn.addEventListener('click', function() { jumpSentence(-1); });
+        skipForwardBtn.addEventListener('click', function() { jumpSentence(1); });
+
+        pasteBtn.addEventListener('click', function() {
+            navigator.clipboard.readText().then(function(t) {
+                textInput.value = t;
+                updateCharCount();
+                showStatus('已从剪贴板粘贴', 'success');
+            }).catch(function() {
+                showStatus('无法访问剪贴板，请手动粘贴', 'error');
+            });
+        });
+
+        readingArea.addEventListener('click', function(e) {
+            const target = e.target;
+            if (target.classList.contains('sentence')) {
+                const start = parseInt(target.dataset.start);
+                if (!isNaN(start)) {
+                    lastCharIndex = start;
+                    synth.cancel();
+                    let textToSpeak = filteredText.substring(lastCharIndex);
+                    if (!textToSpeak.trim()) {
+                        showStatus('已经朗读到文末', 'success');
+                        return;
+                    }
+                    showStatus('从该位置开始朗读', 'info');
+                    startSpeaking(textToSpeak, lastCharIndex);
+                }
+            }
+        });
+
+        progressBar.addEventListener('click', function(e) {
+            const rect = progressBar.getBoundingClientRect();
+            const pct = (e.clientX - rect.left) / rect.width;
+            lastCharIndex = Math.floor(pct * filteredText.length);
+            synth.cancel();
+            let textToSpeak = filteredText.substring(lastCharIndex);
+            if (textToSpeak.trim()) startSpeaking(textToSpeak, lastCharIndex);
+            showStatus('已跳转到 ' + Math.round(pct * 100) + '%', 'info');
+        });
+
+        voiceSelect.addEventListener('change', function() { updateVoiceInfo(); saveSettings(); });
+        rateRange.addEventListener('input', function() { rateValue.textContent = rateRange.value; saveSettings(); });
+        textInput.addEventListener('input', updateCharCount);
+        markdownFilter.addEventListener('change', saveSettings);
+        historyClearBtn.addEventListener('click', clearHistory);
+
+        var isRecycleBinVisible = false;
+        recycleBinBtn.addEventListener('click', function() {
+            isRecycleBinVisible = !isRecycleBinVisible;
+            recyclePanel.classList.toggle('visible', isRecycleBinVisible);
+            recycleBinBtn.textContent = isRecycleBinVisible ? '🗑️ 关闭回收站' : '️ 回收站';
+            recycleBinBtn.appendChild(recycleBadge);
+            if (isRecycleBinVisible) renderRecycleBin();
+        });
+
+        newRecordBtn.addEventListener('click', function() {
+            synth.cancel();
+            isReading = false; isPaused = false; errorOccurred = false; wasInterrupted = false;
+            currentActiveHistoryId = null;
+            textInput.value = '';
+            filteredText = '';
+            lastCharIndex = 0;
+            updateCharCount();
+            readingArea.innerHTML = '<p style="color: var(--text-muted); text-align: center; margin-top: 200px; font-size: 16px;">开始朗读后，文本将显示在这里</p>';
+            readingArea.classList.remove('active');
+            clearHighlights();
+            progressBarFill.style.width = '0%';
+            progressPct.textContent = '0%';
+            progressCount.textContent = '0 / 0';
+            updateButtons();
+            aiOutput.textContent = '';
+            aiOutput.className = 'ai-output';
+            document.querySelectorAll('.ai-btn').forEach(function(b) { b.classList.remove('active'); });
+            textInput.focus();
+        });
+
+        document.querySelectorAll('.theme-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() { applyTheme(btn.dataset.theme); });
+        });
+
+        minimalBtn.addEventListener('click', function() { setMinimal(true); });
+        minimalExitBtn.addEventListener('click', function() { setMinimal(false); });
+        minimalPlayBtn.addEventListener('click', function() {
+            if (errorOccurred || wasInterrupted) { lastCharIndex = 0; errorOccurred = false; wasInterrupted = false; }
+            speakText(synth.speaking ? true : false);
+        });
+        minimalPauseBtn.addEventListener('click', function() {
+            if (synth.speaking && !isPaused) { synth.pause(); isPaused = true; }
+            updateButtons();
+        });
+        minimalStopBtn.addEventListener('click', function() {
+            synth.cancel(); isReading = false; isPaused = false; errorOccurred = false; wasInterrupted = false;
+            showStatus('已停止', 'info'); updateButtons();
+        });
+
+        aiDeepBtn.addEventListener('click', function() { generateAI('deep'); });
+        aiOneLineBtn.addEventListener('click', function() { generateAI('oneline'); });
+        aiCoreBtn.addEventListener('click', function() { generateAI('core'); });
+        aiKeywordsBtn.addEventListener('click', function() { generateAI('keywords'); });
+
+        aiConfigToggle.addEventListener('click', function() {
+            isConfigVisible = !isConfigVisible;
+            aiConfigPanel.classList.toggle('visible', isConfigVisible);
+            aiConfigToggle.textContent = isConfigVisible ? '⚙️ 收起 AI 配置' : '⚙️ 配置 AI 模型 API';
+        });
+
+        // 当选择不同提供商时，自动填充对应的API地址
+        aiProvider.addEventListener('change', function() {
+            var provider = aiProvider.value;
+            var defaultUrl = getProviderUrl(provider);
+            if (!aiApiUrl.value || aiApiUrl.value === getProviderUrl(aiConfig.provider || 'openai')) {
+                aiApiUrl.value = defaultUrl;
+            }
+            // 自动设置默认模型
+            var defaultModels = {
+                openai: 'gpt-4o-mini',
+                anthropic: 'claude-3-5-sonnet-20241022',
+                deepseek: 'deepseek-chat',
+                openrouter: 'openai/gpt-4o-mini',
+                ollama: 'llama3',
+                siliconflow: 'Qwen/Qwen2.5-72B-Instruct',
+                aliyun: 'qwen-plus',
+                tencent: 'hunyuan-lite'
+            };
+            if (!aiModel.value || defaultModels[aiConfig.provider || ''] === aiModel.value) {
+                aiModel.value = defaultModels[provider] || 'gpt-4o-mini';
+            }
+            updateAIStatus();
+        });
+
+        aiConfigSave.addEventListener('click', saveAIConfigFn);
+
+        var aiConfigTest = document.getElementById('aiConfigTest');
+        aiConfigTest.addEventListener('click', function() {
+            var currentProvider = aiProvider.value || 'openai';
+            var currentApiUrl = (aiApiUrl.value || '').trim();
+            var currentApiKey = (aiApiKey.value || '').trim();
+            var currentModel = (aiModel.value || '').trim();
+
+            if (!currentApiKey || !currentApiUrl || !currentModel) {
+                aiStatus.textContent = '请填写完整的 API 配置信息';
+                aiStatus.className = 'ai-status';
+                aiStatus.style.color = 'var(--status-error-color)';
+                return;
+            }
+
+            aiConfigTest.textContent = '测试中...';
+            aiConfigTest.disabled = true;
+
+            // 自动补全 URL
+            if (!currentApiUrl.startsWith('http')) {
+                currentApiUrl = 'https://' + currentApiUrl;
+            }
+
+            var testPayload;
+            if (currentProvider === 'anthropic') {
+                testPayload = {
+                    model: currentModel,
+                    max_tokens: 10,
+                    messages: [{ role: 'user', content: 'Hi' }]
+                };
+            } else if (currentProvider === 'ollama') {
+                testPayload = {
+                    model: currentModel,
+                    messages: [{ role: 'user', content: 'Hi' }],
+                    stream: false
+                };
+            } else {
+                testPayload = {
+                    model: currentModel,
+                    max_tokens: 10,
+                    messages: [
+                        { role: 'system', content: 'You are a helpful assistant.' },
+                        { role: 'user', content: 'Hi' }
+                    ]
+                };
+            }
+
+            var testHeaders = { 'Content-Type': 'application/json' };
+            if (currentProvider === 'anthropic') {
+                testHeaders['x-api-key'] = currentApiKey;
+                testHeaders['anthropic-version'] = '2023-06-01';
+            } else if (currentProvider === 'openrouter') {
+                testHeaders['HTTP-Referer'] = window.location.href;
+                testHeaders['Authorization'] = 'Bearer ' + currentApiKey;
+            } else {
+                testHeaders['Authorization'] = 'Bearer ' + currentApiKey;
+            }
+
+            fetch(currentApiUrl, {
+                method: 'POST',
+                headers: testHeaders,
+                body: JSON.stringify(testPayload)
+            }).then(function(response) {
+                if (!response.ok) {
+                    if (response.status === 401) throw new Error('API Key 无效 (401)');
+                    if (response.status === 404) throw new Error('API 地址错误 (404)，请检查 URL');
+                    if (response.status === 429) throw new Error('请求太频繁 (429)');
+                    throw new Error('状态码: ' + response.status);
+                }
+                return response.json();
+            }).then(function(data) {
+                aiStatus.textContent = '连接成功！API 配置有效';
+                aiStatus.className = 'ai-status online';
+                aiStatus.style.color = '';
+                aiConfigTest.textContent = '测试连接';
+                aiConfigTest.disabled = false;
+            }).catch(function(err) {
+                aiStatus.textContent = '测试失败: ' + err.message;
+                aiStatus.className = 'ai-status';
+                aiStatus.style.color = 'var(--status-error-color)';
+                aiConfigTest.textContent = '测试连接';
+                aiConfigTest.disabled = false;
+            });
+        });
+
+        if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices();
+        applyTheme(currentTheme);
+        renderHistory();
+        loadAIConfig();
+        window.addEventListener('beforeunload', saveProgress);
+        setInterval(saveProgress, 5000);
+
+        const lastText = localStorage.getItem('tts-last-text');
+        const lastFiltered = localStorage.getItem('tts-last-filtered');
+        const lastPos = parseInt(localStorage.getItem('tts-last-pos') || '0');
+        const lastTime = parseInt(localStorage.getItem('tts-last-time') || '0');
+        if (lastText && lastFiltered && lastPos > 0 && lastTime && Date.now() - lastTime < 7 * 24 * 60 * 60 * 1000) {
+            textInput.value = lastText;
+            filteredText = lastFiltered;
+            lastCharIndex = lastPos;
+            updateCharCount();
+            prepareReadingArea();
+            highlightSentenceByIndex(lastPos);
+            showStatus('已恢复上次阅读进度（' + formatTimeAgo(Date.now() - lastTime) + '前）', 'info');
+        }
+
+        document.addEventListener('keydown', function(e) {
+            const tag = e.target.tagName;
+            if (tag === 'TEXTAREA' || tag === 'INPUT' || tag === 'SELECT') return;
+            if (e.key === ' ') {
+                e.preventDefault();
+                playBtn.click();
+            }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); jumpSentence(-1); }
+            if (e.key === 'ArrowRight') { e.preventDefault(); jumpSentence(1); }
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                rateRange.value = Math.min(3, parseFloat(rateRange.value) + 0.1).toFixed(1);
+                rateValue.textContent = rateRange.value;
+                saveSettings();
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                rateRange.value = Math.max(0.3, parseFloat(rateRange.value) - 0.1).toFixed(1);
+                rateValue.textContent = rateRange.value;
+                saveSettings();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                addHistory(textInput.value);
+                if (errorOccurred || wasInterrupted) { lastCharIndex = 0; errorOccurred = false; wasInterrupted = false; }
+                speakText(false);
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                synth.cancel(); isReading = false; isPaused = false; errorOccurred = false; wasInterrupted = false;
+                saveProgress(); readingArea.classList.remove('active'); clearHighlights(); updateButtons();
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') { e.preventDefault(); playBtn.click(); }
+            if (e.key === 'Escape') { if (document.body.classList.contains('body-minimal')) setMinimal(false); }
+        });
+    </script>
+</body>
+</html>
